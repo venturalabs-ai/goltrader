@@ -1,0 +1,156 @@
+# Goltrader híbrido 24/7 na VPS Hostinger 1925412 (Ubuntu 24.04 + Docker + Traefik).
+# Projeto Compose: "goltrader" → rede padrão "goltrader_default" (o Traefik da VPS roda em network_mode: host com
+# providers.docker e resolve os containers por essa rede via o label traefik.docker.network — mesmo padrão do golcrm-app e golclaw).
+#
+# Serviços:
+#   api     FastAPI (backend/main.py:app) — interno; só 127.0.0.1:${GOLTRADER_API_LOCAL_PORT} no host (watchdog).
+#   worker  execução Bybit 24/7 (python -m execution.worker): reconciliação, WS privado, kill switch, lease.
+#   web     nginx (frontend compilado) — ÚNICO serviço exposto, via Traefik/HTTPS. Faz proxy de /api e /ws para a api.
+#
+# Imagens: goltrader-api:<tag> e goltrader-web:<tag> são CONSTRUÍDAS na própria VPS (atualizar.sh ou
+# goltrader-build.compose.yml); nada é publicado em registry e não há GitHub Actions. <tag> = sha12 do commit.
+# Uso manual: scripts/vps-compose.sh up -d   (carrega a tag atual) — ou export GOLTRADER_TAG=<sha12>.
+# Padrão SEGURO: Testnet, ANALYZER_MODE=true, GOLTRADER_ALLOW_LIVE=false. Real só com a sequência do docs/DEPLOY-VPS.md.
+name: goltrader
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
+x-app-env: &app-env
+  GOLTRADER_STATE_DIR: /data/state
+  GT_LOG_DIR: /data/state/logs
+  # Travas: valores padrão seguros; o .env só os muda de forma explícita.
+  BYBIT_TESTNET: ${BYBIT_TESTNET:-true}
+  ANALYZER_MODE: ${ANALYZER_MODE:-true}
+  GOLTRADER_ALLOW_LIVE: ${GOLTRADER_ALLOW_LIVE:-false}
+  GOLTRADER_LIVE_CONFIRMATION: ${GOLTRADER_LIVE_CONFIRMATION:-}
+  GOLTRADER_API_TOKEN: ${GOLTRADER_API_TOKEN:?defina GOLTRADER_API_TOKEN no .env}
+  GOLTRADER_CORS_ORIGINS: ${GOLTRADER_CORS_ORIGINS:-https://${GOLTRADER_DOMAIN:-goltrader.srv1925412.hstgr.cloud}}
+  GOLTRADER_DATA_SOURCE: ${GOLTRADER_DATA_SOURCE:-bybit}
+  TZ: ${TZ:-America/Sao_Paulo}
+
+x-app-base: &app-base
+  image: goltrader-api:${GOLTRADER_TAG:?defina GOLTRADER_TAG (sha12 do commit) — use deploy/hostinger-vps/vps-compose.sh ou atualizar.sh}
+  build:
+    context: ../..
+    dockerfile: deploy/docker/Dockerfile.api
+    args:
+      GIT_SHA: ${GOLTRADER_TAG:-dev}
+      EXTRA_PIP: ${GOLTRADER_EXTRA_PIP:-}
+  pull_policy: never
+  init: true
+  restart: unless-stopped
+  logging: *logging
+  env_file:
+    - path: .env
+      required: false
+  volumes:
+    - goltrader-state:/data/state
+  read_only: true
+  tmpfs:
+    - /tmp:size=64m,mode=1777
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+
+services:
+  api:
+    <<: *app-base
+    environment:
+      <<: *app-env
+    working_dir: /app/backend
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips", "*"]
+    ports:
+      - "127.0.0.1:${GOLTRADER_API_LOCAL_PORT:-18000}:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/saude', timeout=4).status == 200 else 1)"]
+      interval: 15s
+      timeout: 5s
+      start_period: 30s
+      retries: 4
+    stop_grace_period: 20s
+    mem_limit: 768m
+    cpus: 1.5
+
+  worker:
+    <<: *app-base
+    environment:
+      <<: *app-env
+      GOLTRADER_LEASE_TTL: ${GOLTRADER_LEASE_TTL:-30}
+      GOLTRADER_MAX_POSITION_USD: ${GOLTRADER_MAX_POSITION_USD:-1000}
+      GOLTRADER_MAX_ORDER_USD: ${GOLTRADER_MAX_ORDER_USD:-500}
+      GOLTRADER_MAX_DAILY_LOSS_USD: ${GOLTRADER_MAX_DAILY_LOSS_USD:-100}
+      GOLTRADER_MAX_ORDERS_PER_MIN: ${GOLTRADER_MAX_ORDERS_PER_MIN:-20}
+    working_dir: /app
+    command: ["python", "-m", "execution.worker"]
+    healthcheck:
+      test: ["CMD", "python", "-m", "execution.healthcheck", "45"]
+      interval: 15s
+      timeout: 8s
+      start_period: 30s
+      retries: 3
+    # Dá tempo de liberar o lease e gravar o heartbeat final antes do SIGKILL.
+    stop_grace_period: 45s
+    mem_limit: 512m
+    cpus: 1.0
+
+  web:
+    image: goltrader-web:${GOLTRADER_TAG:?defina GOLTRADER_TAG}
+    build:
+      context: ../..
+      dockerfile: deploy/docker/Dockerfile.web
+      args:
+        GIT_SHA: ${GOLTRADER_TAG:-dev}
+    pull_policy: never
+    init: true
+    restart: unless-stopped
+    logging: *logging
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
+      interval: 15s
+      timeout: 3s
+      start_period: 10s
+      retries: 3
+    mem_limit: 128m
+    expose:
+      - "8080"
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: ${GOLTRADER_TRAEFIK_NETWORK:-goltrader_default}
+      # HTTP (entrypoint web) → HTTPS permanente, mantendo o host (exceto desafio ACME).
+      traefik.http.middlewares.goltrader-https.redirectscheme.scheme: https
+      traefik.http.middlewares.goltrader-https.redirectscheme.permanent: "true"
+      traefik.http.routers.goltrader-http.rule: Host(`${GOLTRADER_DOMAIN:?defina GOLTRADER_DOMAIN}`) && !PathPrefix(`/.well-known/acme-challenge/`)
+      traefik.http.routers.goltrader-http.entrypoints: web
+      traefik.http.routers.goltrader-http.middlewares: goltrader-https
+      traefik.http.routers.goltrader-http.service: goltrader
+      # HTTPS
+      traefik.http.routers.goltrader.rule: Host(`${GOLTRADER_DOMAIN}`)
+      traefik.http.routers.goltrader.entrypoints: websecure
+      traefik.http.routers.goltrader.tls: "true"
+      traefik.http.routers.goltrader.tls.certresolver: ${GOLTRADER_CERTRESOLVER:-letsencrypt}
+      traefik.http.routers.goltrader.middlewares: goltrader-headers
+      traefik.http.routers.goltrader.service: goltrader
+      traefik.http.services.goltrader.loadbalancer.server.port: "8080"
+      traefik.http.middlewares.goltrader-headers.headers.stsSeconds: "31536000"
+      traefik.http.middlewares.goltrader-headers.headers.stsIncludeSubdomains: "false"
+      traefik.http.middlewares.goltrader-headers.headers.contentTypeNosniff: "true"
+      traefik.http.middlewares.goltrader-headers.headers.frameDeny: "true"
+
+volumes:
+  goltrader-state:
+    name: goltrader-state

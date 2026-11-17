@@ -1,6 +1,6 @@
 # STATUS — Goltrader Híbrido
 
-Atualizado: 17/11/2026 08:25 BRT
+Atualizado: 17/11/2026 08:32 BRT
 
 ## O que está sendo feito
 Construção do **Goltrader híbrido** (notebook + VPS Hostinger 1925412) juntando: interface de fluxo do Tredye (reimplementada),
@@ -31,6 +31,14 @@ conta real só com "CONFIRMAR"; kill switch mantido. **Sem GitHub Actions.**
 | Interactive Brokers | STUB (desligado) | TWS/Gateway (ib_async) / Client Portal | paper; via IBKR dá acesso a B3 |
 | Pepperstone | STUB (desligado) | cTrader Open API ou MT5 | MT5 só Windows |
 | IQ Option | STUB (desligado) — **risco ToS/bloqueio** | sem API oficial (libs não oficiais) | manter desligado |
+
+## Deploy VPS 24/7 (PR `feat/deploy-vps-24x7`) — 17/11/2026 08:32 BRT
+- [x] Dockerfiles multi-stage (`deploy/docker/`): `api` (python slim, sem root, mesma imagem para API e worker) e `web` (build do Vite + nginx sem root, proxy `/api` e `/ws`).
+- [x] `deploy/hostinger-vps/docker-compose.yml` (api/worker/web, Traefik via `GOLTRADER_DOMAIN`, rede `goltrader_default`, `restart: unless-stopped`, healthchecks, volume nomeado, log 10 MB × 5, read-only/cap_drop) + `.env.example` (Testnet, `ANALYZER_MODE=true`, `GOLTRADER_ALLOW_LIVE=false`, `GOLTRADER_API_TOKEN`).
+- [x] `atualizar.sh` (build por sha12, espera saúde, **rollback automático**, trava de deploy, portão de conta real), `watchdog.sh` + timer systemd (+ alerta Telegram opcional), `vps-compose.sh`, `goltrader-build.compose.yml` (build via Docker Manager).
+- [x] Scripts PowerShell do notebook (`scripts/windows/`): backup verificado, instalar/atualizar, rodar Testnet (travas forçadas).
+- [x] Runbook em português: `docs/DEPLOY-VPS.md`. Testes dos scripts com docker falso: `scripts/tests/test-deploy-scripts.sh` (23 verificações).
+- [ ] **Nada implantado** (a pedido). Descoberta da VPS (Traefik host-mode, resolvedor `letsencrypt`, redes `<projeto>_default`) documentada. Faltam: PR de execução na `main`, chaves da Testnet, DNS/host do painel.
 
 ## Pendente
 - Backend autenticado (hoje `api/server.py` tem CORS `*` e sem auth — **não expor na VPS assim**).

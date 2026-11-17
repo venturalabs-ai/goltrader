@@ -1,0 +1,17 @@
+.git
+.github
+**/.env
+**/.env.*
+!**/.env.example
+**/node_modules
+**/dist
+backend
+brokers
+core
+execution
+docs
+tests
+**/__pycache__
+**/state
+**/logs
+*.zip
