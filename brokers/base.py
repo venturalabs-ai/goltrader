@@ -58,11 +58,17 @@ class OrderResult:
     raw: Dict[str, Any] = field(default_factory=dict)
 
 
-KILL_FLAG = Path(os.getenv("GT_LOG_DIR", "logs")) / "KILL_SWITCH"
+KILL_FLAG = Path(os.getenv("GT_LOG_DIR", "logs")) / "KILL_SWITCH"   # legado (fixado na importação)
+
+
+def kill_flag_paths() -> List[Path]:
+    """Arquivos-sentinela do kill switch (lidos a cada chamada): logs/KILL_SWITCH e <state>/KILL_SWITCH."""
+    return [Path(os.getenv("GT_LOG_DIR", "logs")) / "KILL_SWITCH",
+            Path(os.getenv("GOLTRADER_STATE_DIR") or "state") / "KILL_SWITCH"]
 
 
 def kill_active() -> bool:
-    return KILL_FLAG.exists()
+    return KILL_FLAG.exists() or any(p.exists() for p in kill_flag_paths())
 
 
 def require_live_confirmation(mode: Mode, confirmation: Optional[str]) -> None:
@@ -79,9 +85,13 @@ class BrokerAdapter(ABC):
     asset_classes: tuple = ()      # ("crypto", "forex", "stocks", "options", ...)
     official_api: str = ""
     notes: str = ""
+    unofficial: bool = False       # True = sem API oficial (risco de ToS/bloqueio)
 
     def __init__(self, mode: Mode = Mode.TESTNET, confirmation: Optional[str] = None):
         require_live_confirmation(mode, confirmation)
+        if mode is Mode.LIVE:
+            from core.safety import assert_live_allowed
+            assert_live_allowed(require_testnet_false=False)
         self.mode = mode
 
     # --- dados de mercado ---
@@ -113,7 +123,11 @@ class BrokerAdapter(ABC):
     @abstractmethod
     def cancel_all(self, symbol: Optional[str] = None) -> Dict[str, Any]: ...
 
+    def close_all(self, symbol: Optional[str] = None) -> Dict[str, Any]:
+        """Fecha tudo com ordens reduce-only (usado pelo kill switch). Adapters que operam devem implementar."""
+        raise NotImplementedError(f"Adapter '{self.name}' não implementa close_all.")
+
     def describe(self) -> Dict[str, Any]:
         return {"name": self.name, "display_name": self.display_name, "readiness": self.readiness.value,
                 "asset_classes": list(self.asset_classes), "official_api": self.official_api,
-                "mode": self.mode.value, "notes": self.notes}
+                "mode": self.mode.value, "notes": self.notes, "unofficial": self.unofficial}

@@ -1,11 +1,13 @@
 from .base import Readiness
-from .stub import StubBroker
+from .ccxt_base import CcxtAdapter
 
 
-class BinanceAdapter(StubBroker):
+class BinanceAdapter(CcxtAdapter):
     name = "binance"
     display_name = "Binance"
-    readiness = Readiness.STUB
-    asset_classes = ('crypto',)
-    official_api = 'https://developers.binance.com/ (ccxt: binance)'
-    notes = 'Spot/Futures; testnet em testnet.binance.vision e testnet.binancefuture.com. Verificar restrições regulatórias no Brasil/CVM.'
+    readiness = Readiness.PARTIAL
+    asset_classes = ("crypto",)
+    ccxt_id = "binance"
+    credential_env = {"apiKey": "BINANCE_API_KEY", "secret": "BINANCE_API_SECRET"}
+    official_api = "https://developers.binance.com/ (ccxt: binance)"
+    notes = "Via ccxt (spot por padrão); testnet via sandbox do ccxt. Desligado por padrão. Verificar restrições regulatórias no Brasil/CVM."
