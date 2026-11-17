@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2016,SC2034  # as condições vão entre aspas simples para o eval; variáveis usadas dentro delas
 # Testa atualizar.sh (build/health/rollback/portão LIVE) e watchdog.sh com docker/git/curl FALSOS (sem Docker real, sem rede).
 # Uso: scripts/tests/test-deploy-scripts.sh
 set -uo pipefail
