@@ -2,6 +2,7 @@
 .env.*
 !.env.example
 .venv/
+venv/
 __pycache__/
 *.pyc
 logs/
@@ -11,3 +12,7 @@ upstream_repos/
 backup_*/
 *.bak
 *_bak
+*.v*_bak
+parking_data.csv
+.rea/
+node_modules/
