@@ -1,0 +1,13 @@
+[Unit]
+Description=Goltrader watchdog (saude da API/worker/web + alerta Telegram opcional)
+Wants=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+Environment=GOLTRADER_DEPLOY_STATE=@STATE_DIR@
+ExecStart=@COMPOSE_DIR@/watchdog.sh
+TimeoutStartSec=120
+Nice=10
+# Falha do watchdog (exit 1) significa "problema detectado"; não deve marcar o systemd como quebrado em loop.
+SuccessExitStatus=0 1

@@ -1,6 +1,6 @@
 # STATUS — Goltrader Híbrido
 
-Atualizado: 17/11/2026 08:25 BRT
+Atualizado: 17/11/2026 08:32 BRT
 
 ## O que está sendo feito
 Construção do **Goltrader híbrido** (notebook + VPS Hostinger 1925412) juntando: interface de fluxo do Tredye (reimplementada),
@@ -38,6 +38,14 @@ conta real só com "CONFIRMAR"; kill switch mantido. **Sem GitHub Actions.**
 - Pulse: Sankey/breadth/humor; OB multi-timeframe (5m/1m); PnL realizado real ligado ao limite de perda diária; fechar posições no kill switch; IQ_DIGITAL; provedor real de calendário econômico; teste E2E na Testnet Bybit (ordens) — **ainda não executado**.
 - Docker + deploy na VPS atrás do Traefik (build na VPS, deploy key somente-leitura).
 - Paridade do notebook (mesmo código).
+
+## Deploy VPS 24/7 (PR `feat/deploy-vps-24x7`) — 17/11/2026 08:32 BRT
+- [x] Dockerfiles multi-stage (`deploy/docker/`): `api` (python slim, sem root, mesma imagem para API e worker) e `web` (build do Vite + nginx sem root, proxy `/api` e `/ws`).
+- [x] `deploy/hostinger-vps/docker-compose.yml` (api/worker/web, Traefik via `GOLTRADER_DOMAIN`, rede `goltrader_default`, `restart: unless-stopped`, healthchecks, volume nomeado, log 10 MB × 5, read-only/cap_drop) + `.env.example` (Testnet, `ANALYZER_MODE=true`, `GOLTRADER_ALLOW_LIVE=false`, `GOLTRADER_API_TOKEN`).
+- [x] `atualizar.sh` (build por sha12, espera saúde, **rollback automático**, trava de deploy, portão de conta real), `watchdog.sh` + timer systemd (+ alerta Telegram opcional), `vps-compose.sh`, `goltrader-build.compose.yml` (build via Docker Manager).
+- [x] Scripts PowerShell do notebook (`scripts/windows/`): backup verificado, instalar/atualizar, rodar Testnet (travas forçadas).
+- [x] Runbook em português: `docs/DEPLOY-VPS.md`. Testes dos scripts com docker falso: `scripts/tests/test-deploy-scripts.sh` (23 verificações).
+- [ ] **Nada implantado** (a pedido). Descoberta da VPS (Traefik host-mode, resolvedor `letsencrypt`, redes `<projeto>_default`) documentada. Faltam: PR de execução na `main`, chaves da Testnet, DNS/host do painel.
 
 ## Próximos passos
 1. Fase 0 do plano (Docker, pre-commit/gitleaks, isolar código Windows).

@@ -1,0 +1,40 @@
+# Build das imagens NA PRÓPRIA VPS pelo Docker Manager (alternativa ao atualizar.sh), no padrão do projeto vps-build.
+# O repositório goltrader é PÚBLICO: o contexto vem por HTTPS (sem deploy key). One-shot, não publica nada.
+# Variáveis: GOLTRADER_COMMIT (sha completo de 40 chars) e GOLTRADER_SHA (os 12 primeiros) — a tag das imagens.
+# Depois do build: no projeto goltrader, GOLTRADER_TAG=<sha12> e Redeploy. Voltar versão = tag anterior.
+name: goltrader-build
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+services:
+  goltrader-build:
+    image: docker:28-cli
+    restart: "no"
+    network_mode: bridge
+    entrypoint: ["/bin/sh", "-ec"]
+    environment:
+      SHA_TAG: ${GOLTRADER_SHA:?defina GOLTRADER_SHA (12 primeiros chars do commit)}
+      GIT_COMMIT: ${GOLTRADER_COMMIT:?defina GOLTRADER_COMMIT (sha completo)}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    logging: *logging
+    command:
+      - |
+        CTX="https://github.com/venturalabs-ai/goltrader.git#$$GIT_COMMIT"
+        if docker image inspect "goltrader-api:$$SHA_TAG" >/dev/null 2>&1 && docker image inspect "goltrader-web:$$SHA_TAG" >/dev/null 2>&1; then
+          echo "imagens goltrader:$$SHA_TAG já existem, build não necessário"; exit 0
+        fi
+        echo "build goltrader:$$SHA_TAG a partir de goltrader@$$GIT_COMMIT"
+        docker buildx build --progress=plain -f deploy/docker/Dockerfile.api --build-arg GIT_SHA="$$SHA_TAG" \
+          --label org.opencontainers.image.revision="$$GIT_COMMIT" -t "goltrader-api:$$SHA_TAG" "$$CTX"
+        docker buildx build --progress=plain -f deploy/docker/Dockerfile.web --build-arg GIT_SHA="$$SHA_TAG" \
+          --label org.opencontainers.image.revision="$$GIT_COMMIT" -t "goltrader-web:$$SHA_TAG" "$$CTX"
+        echo "build concluído: goltrader-api:$$SHA_TAG goltrader-web:$$SHA_TAG"
+        # mantém só as 3 imagens mais novas de cada (as em uso nunca são removidas pelo docker)
+        for img in goltrader-api goltrader-web; do
+          docker images "$$img" --format '{{.Tag}}' | tail -n +4 | while read -r t; do
+            [ "$$t" = "$$SHA_TAG" ] || docker image rm "$$img:$$t" 2>/dev/null || true
+          done
+        done

@@ -1,0 +1,51 @@
+# syntax=docker/dockerfile:1.7
+# Imagem da API (FastAPI) e do worker de execução — a MESMA imagem; o compose muda só o comando.
+# Contexto de build: raiz do repositório.  docker build -f deploy/docker/Dockerfile.api -t goltrader-api:<sha12> .
+ARG PYTHON_VERSION=3.12
+
+FROM python:${PYTHON_VERSION}-slim AS builder
+ENV PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1
+WORKDIR /build
+COPY deploy/requirements-worker.txt ./worker.txt
+COPY backend/requirements.txt ./backend-all.txt
+# Extras opcionais dos adapters desligados (ex.: --build-arg EXTRA_PIP="ccxt ib_insync"). Vazio por padrão.
+ARG EXTRA_PIP=""
+# backend/requirements.txt mistura dependências de teste depois de "# testes": só o runtime entra na imagem.
+RUN python -m venv /opt/venv \
+ && sed '/^# testes/,$d' backend-all.txt > backend-run.txt \
+ && /opt/venv/bin/pip install -r worker.txt -r backend-run.txt ${EXTRA_PIP}
+
+FROM python:${PYTHON_VERSION}-slim AS runtime
+ARG GIT_SHA=dev
+LABEL org.opencontainers.image.title="goltrader-api" \
+      org.opencontainers.image.source="https://github.com/venturalabs-ai/goltrader" \
+      org.opencontainers.image.revision="${GIT_SHA}"
+ENV PATH=/opt/venv/bin:$PATH \
+    PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    GOLTRADER_BUILD=${GIT_SHA} \
+    GOLTRADER_STATE_DIR=/data/state \
+    GT_LOG_DIR=/data/state/logs \
+    BYBIT_TESTNET=true \
+    ANALYZER_MODE=true \
+    GOLTRADER_ALLOW_LIVE=false
+# Usuário sem privilégios (uid/gid fixos para casar com o volume nomeado).
+RUN groupadd --system --gid 10001 goltrader \
+ && useradd --system --uid 10001 --gid 10001 --home-dir /app --shell /usr/sbin/nologin goltrader \
+ && mkdir -p /app /data/state/logs \
+ && chown -R 10001:10001 /app /data
+COPY --from=builder /opt/venv /opt/venv
+WORKDIR /app
+COPY --chown=10001:10001 backend ./backend
+COPY --chown=10001:10001 brokers ./brokers
+COPY --chown=10001:10001 core ./core
+COPY --chown=10001:10001 execution ./execution
+USER 10001:10001
+VOLUME ["/data/state"]
+EXPOSE 8000
+# API: uvicorn main:app a partir de /app/backend. Worker: o compose usa working_dir=/app e `python -m execution.worker`
+# (backend/ e a raiz têm módulos de mesmo nome — execution — por isso cada processo tem seu diretório de trabalho).
+WORKDIR /app/backend
+HEALTHCHECK --interval=15s --timeout=5s --start-period=30s --retries=4 \
+  CMD python -c "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/saude', timeout=4).status == 200 else 1)"
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips", "*"]
