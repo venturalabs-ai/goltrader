@@ -1,0 +1,603 @@
+{
+ "flow": {
+  "ts": "str",
+  "oi_ts": "str",
+  "fetched": "str",
+  "open": "bool",
+  "status": "str",
+  "n": "int",
+  "n_fo": "int",
+  "adv": "int",
+  "dec": "int",
+  "unch": "int",
+  "inflow": "float",
+  "outflow": "float",
+  "summary": "str",
+  "sectors": [
+   {
+    "g": "str",
+    "f": "float",
+    "fin": "float",
+    "fout": "float",
+    "tv": "float",
+    "n": "int",
+    "adv": "int",
+    "dec": "int",
+    "p": "float",
+    "spd": "float",
+    "vel": "NoneType",
+    "dens": "float",
+    "surge": "bool"
+   }
+  ],
+  "stocks": [
+   {
+    "s": "str",
+    "n": "str",
+    "g": "str",
+    "p": "float",
+    "lp": "float",
+    "tv": "float",
+    "f": "float",
+    "w": "float",
+    "clv": "float",
+    "rv": "float",
+    "fo": "bool",
+    "doi": "float",
+    "bu": "str",
+    "n500": "bool",
+    "vel": "NoneType",
+    "ivr": "NoneType",
+    "spd": "float",
+    "dens": "float",
+    "surge": "bool"
+   }
+  ],
+  "top_in": [
+   "str"
+  ],
+  "top_out": [
+   "str"
+  ],
+  "shockers": [
+   "str"
+  ],
+  "fast_in": [
+   "str"
+  ],
+  "fast_out": [
+   "str"
+  ],
+  "fast_basis": "str",
+  "speed_basis": "str",
+  "surges": [
+   "str"
+  ],
+  "oi_unusual": [
+   "str"
+  ],
+  "session_frac": "float",
+  "nse_adv": {
+   "fo": {
+    "declines": "int",
+    "advances": "int",
+    "unchange": "int"
+   },
+   "n500": {
+    "declines": "int",
+    "advances": "int",
+    "unchange": "int"
+   }
+  },
+  "notes": [],
+  "method": "str",
+  "_published": "str",
+  "_demo": "str"
+ },
+ "liq_symbol_NIFTY__tf_15m": {
+  "symbol": "str",
+  "kind": "str",
+  "tf": "str",
+  "bars": [
+   {
+    "t": "int",
+    "o": "float",
+    "h": "float",
+    "l": "float",
+    "c": "float",
+    "v": "float"
+   }
+  ],
+  "spot": "float",
+  "chain_ts": "str",
+  "expiry": "str",
+  "expiries": [
+   "str"
+  ],
+  "walls": {
+   "max_pain": "float",
+   "ce": [
+    {
+     "k": "float",
+     "oi": "int",
+     "chg": "int"
+    }
+   ],
+   "pe": [
+    {
+     "k": "float",
+     "oi": "int",
+     "chg": "int"
+    }
+   ],
+   "range": [
+    "float"
+   ],
+   "strikes": [
+    {
+     "k": "float",
+     "coi": "int",
+     "poi": "int",
+     "cchg": "int",
+     "pchg": "int"
+    }
+   ],
+   "med": "float",
+   "spot": "float"
+  },
+  "buildup": [
+   {
+    "t": "int",
+    "k": "str",
+    "src": "str"
+   }
+  ],
+  "buildup_src": "str",
+  "delivery": [],
+  "chips": {
+   "support": {
+    "score": "int",
+    "x": "float",
+    "label": "str",
+    "at": "float"
+   },
+   "resistance": {
+    "score": "int",
+    "x": "float",
+    "label": "str",
+    "at": "float"
+   },
+   "bias": {
+    "score": "float",
+    "label": "str",
+    "detail": "str"
+   }
+  },
+  "read": "str",
+  "has_volume": "bool",
+  "open": "bool",
+  "asof": "str",
+  "units": "str",
+  "srcs": [
+   "str"
+  ],
+  "_published": "str",
+  "_demo": "str"
+ },
+ "options_symbol_NIFTY": {
+  "symbol": "str",
+  "spot": "float",
+  "chg": "float",
+  "chg_pct": "float",
+  "expiry": "str",
+  "expiries": [
+   "str"
+  ],
+  "bars": [
+   {
+    "k": "float",
+    "coi": "int",
+    "poi": "int",
+    "cchg": "int",
+    "pchg": "int",
+    "civ": "int",
+    "piv": "float"
+   }
+  ],
+  "smile": [
+   {
+    "k": "float",
+    "civ": "NoneType",
+    "piv": "float"
+   }
+  ],
+  "pcr": "float",
+  "pcr_chg": "float",
+  "max_pain": "float",
+  "atm_iv": "float",
+  "straddle": "float",
+  "range": [
+   "float"
+  ],
+  "walls": [
+   "float"
+  ],
+  "iv1": [
+   "float"
+  ],
+  "conviction": "int",
+  "verdict": "str",
+  "bias": "str",
+  "confidence": "str",
+  "bullets": [
+   "str"
+  ],
+  "chain_ts": "str",
+  "lot": "int",
+  "_published": "str",
+  "_demo": "str"
+ },
+ "pulse": {
+  "mood": {
+   "score": "float",
+   "label": "str",
+   "parts": {
+    "breadth": "float",
+    "flow": "float",
+    "nifty": "float",
+    "vix": "float"
+   }
+  },
+  "headline": "str",
+  "indices": [
+   {
+    "symbol": "str",
+    "spot": "float",
+    "chg": "float",
+    "chg_pct": "float",
+    "quote_ts": "int",
+    "bias": "str",
+    "norm": "float",
+    "expiry": "str",
+    "range": [
+     "float"
+    ],
+    "iv1": [
+     "float"
+    ],
+    "walls": [
+     "float"
+    ],
+    "conviction": "int",
+    "spark": {
+     "t": [],
+     "c": []
+    },
+    "vix": {
+     "available": "bool",
+     "last": "float",
+     "chg": "float",
+     "chg_pct": "float",
+     "prev": "float",
+     "yhi": "float",
+     "ylo": "float",
+     "src": "str",
+     "pctile": "float",
+     "spark": [],
+     "regime": "str",
+     "nifty_daily_move_pct": "float"
+    },
+    "atr": {
+     "points": "float",
+     "pct": "float",
+     "median60": "float",
+     "ratio": "float",
+     "state": "str"
+    }
+   }
+  ],
+  "vix": {
+   "available": "bool",
+   "last": "float",
+   "chg": "float",
+   "chg_pct": "float",
+   "prev": "float",
+   "yhi": "float",
+   "ylo": "float",
+   "src": "str",
+   "pctile": "float",
+   "spark": [
+    "float"
+   ],
+   "regime": "str",
+   "nifty_daily_move_pct": "float"
+  },
+  "sectors": [
+   {
+    "g": "str",
+    "tv": "float",
+    "p": "float",
+    "f": "float",
+    "n": "int",
+    "surge": "bool",
+    "top": [
+     "{...}"
+    ]
+   }
+  ],
+  "adv": "int",
+  "dec": "int",
+  "inflow": "float",
+  "outflow": "float",
+  "ts": "str",
+  "open": "bool",
+  "sim": "bool",
+  "_published": "str",
+  "_demo": "str"
+ },
+ "radar_symbol_RELIANCE": {
+  "symbol": "str",
+  "spot": "float",
+  "chg": "float",
+  "chg_pct": "float",
+  "bias": "str",
+  "norm": "float",
+  "verdict": "str",
+  "axes": [
+   {
+    "k": "str",
+    "v": "float",
+    "line": "str"
+   }
+  ],
+  "range": [
+   "float"
+  ],
+  "iv1": [
+   "float"
+  ],
+  "conviction": "int",
+  "expiry": "str",
+  "levels": [
+   {
+    "p": "float",
+    "t": "str",
+    "k": "str"
+   }
+  ],
+  "series": {
+   "15m": {
+    "c": [
+     []
+    ],
+    "vwap": [
+     "{...}"
+    ]
+   },
+   "1h": {
+    "c": [
+     []
+    ],
+    "vwap": [
+     "{...}"
+    ]
+   },
+   "1d": {
+    "c": [
+     []
+    ],
+    "vwap": [
+     "{...}"
+    ]
+   }
+  },
+  "plan": {
+   "atr": "float"
+  },
+  "comps": [
+   {
+    "name": "str",
+    "score": "float",
+    "reason": "str"
+   }
+  ],
+  "chain_ts": "str",
+  "_published": "str",
+  "_demo": "str"
+ },
+ "strength": {
+  "ts": "int",
+  "open": "bool",
+  "status": "str",
+  "tf": "str",
+  "top": "int",
+  "method": {
+   "adr_days": "int",
+   "oneside": "float",
+   "impulse_adr": "float"
+  },
+  "breadth": {
+   "adv": "int",
+   "dec": "int",
+   "unch": "int",
+   "n": "int",
+   "bull": "int",
+   "bear": "int",
+   "choppy": "int"
+  },
+  "sectors": [
+   {
+    "g": "str",
+    "st": "float",
+    "p": "float",
+    "n": "int",
+    "up": "int"
+   }
+  ],
+  "bull": [
+   {
+    "s": "str",
+    "g": "str",
+    "p": "float",
+    "lp": "float",
+    "o": "float",
+    "st": "float",
+    "adr": "float",
+    "mv": "float",
+    "rk": "int",
+    "drk": "NoneType",
+    "new": "bool",
+    "setup": {
+     "zone": "{...}",
+     "prior": [],
+     "support": "float",
+     "resistance": "float",
+     "liquidity": "float",
+     "invalid": "float",
+     "rr": "float"
+    }
+   }
+  ],
+  "bear": [
+   {
+    "s": "str",
+    "g": "str",
+    "p": "float",
+    "lp": "float",
+    "o": "float",
+    "st": "float",
+    "adr": "float",
+    "mv": "float",
+    "rk": "int",
+    "drk": "NoneType",
+    "new": "bool",
+    "setup": {
+     "zone": "{...}",
+     "prior": [],
+     "support": "float",
+     "resistance": "float",
+     "liquidity": "float",
+     "invalid": "float",
+     "rr": "float"
+    }
+   }
+  ],
+  "charts": {
+   "DATAPATTNS": [
+    [
+     "int"
+    ]
+   ],
+   "INDIANB": [
+    [
+     "int"
+    ]
+   ],
+   "BANKBARODA": [
+    [
+     "int"
+    ]
+   ],
+   "CUB": [
+    [
+     "int"
+    ]
+   ],
+   "VOLTAS": [
+    [
+     "int"
+    ]
+   ],
+   "IREDA": [
+    [
+     "int"
+    ]
+   ],
+   "RVNL": [
+    [
+     "int"
+    ]
+   ],
+   "LAURUSLABS": [
+    [
+     "int"
+    ]
+   ],
+   "CANBK": [
+    [
+     "int"
+    ]
+   ],
+   "IRFC": [
+    [
+     "int"
+    ]
+   ],
+   "TATASTEEL": [
+    [
+     "int"
+    ]
+   ],
+   "JUBLFOOD": [
+    [
+     "int"
+    ]
+   ],
+   "MAXHEALTH": [
+    [
+     "int"
+    ]
+   ],
+   "HEROMOTOCO": [
+    [
+     "int"
+    ]
+   ],
+   "BAJFINANCE": [
+    [
+     "int"
+    ]
+   ],
+   "ULTRACEMCO": [
+    [
+     "int"
+    ]
+   ],
+   "BOSCHLTD": [
+    [
+     "int"
+    ]
+   ],
+   "HCLTECH": [
+    [
+     "int"
+    ]
+   ],
+   "MFSL": [
+    [
+     "int"
+    ]
+   ],
+   "INDUSINDBK": [
+    [
+     "int"
+    ]
+   ]
+  },
+  "dots": [
+   [
+    "str"
+   ]
+  ],
+  "_published": "str",
+  "_demo": "str"
+ },
+ "symbols": [
+  {
+   "symbol": "str",
+   "name": "str",
+   "lot": "int",
+   "kind": "str"
+  }
+ ]
+}

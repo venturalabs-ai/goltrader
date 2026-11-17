@@ -1,0 +1,182 @@
+== pulse 77
+200 document https://www.tredye.com/pulse/?view=flow 70716
+200 stylesheet https://www.tredye.com/broker/nse-blur.css?v=10pb1 5031
+200 script https://www.tredye.com/broker/live.js?v=59rl17 97960
+200 script https://www.tredye.com/ads/w.js?v=pr2track1 8521
+200 script https://www.tredye.com/ad-config.js?v=2 969
+200 script https://www.tredye.com/ads/adslot.js?v=5hy1 12369
+200 stylesheet https://www.tredye.com/_next/static/chunks/3mx_rc1f6c8fx.css 4973
+200 stylesheet https://www.tredye.com/_next/static/chunks/1-tqecajw2lq4.css 208508
+200 script https://www.tredye.com/_next/static/chunks/21an7k2qnjfsf.js 13272
+200 script https://www.tredye.com/_next/static/chunks/0hvbd-gw9lsnw.js 30556
+200 script https://www.tredye.com/_next/static/chunks/0k_2_p7--niwp.js 229811
+200 script https://www.tredye.com/_next/static/chunks/3g5x_2j9ozcls.js 159168
+200 script https://www.tredye.com/_next/static/chunks/turbopack-3-ry682tkyiqk.js 10030
+200 script https://www.tredye.com/_next/static/chunks/28xe2g18l9s1j.js 17713
+200 script https://www.tredye.com/_next/static/chunks/33gi_kp50lwpj.js 37564
+200 script https://www.tredye.com/_next/static/chunks/2am6rjsdu8kj8.js 38885
+200 script https://www.tredye.com/_next/static/chunks/24t6z3m5d5n8s.js 48420
+200 script https://www.tredye.com/_next/static/chunks/1k7phyii0fao6.js 162479
+200 script https://www.tredye.com/_next/static/chunks/2lf8osoqu5ote.js 43740
+200 script https://www.tredye.com/_next/static/chunks/1g8k_tzqypa1s.js 2400
+200 script https://www.tredye.com/_next/static/chunks/0_ryk3smje3xg.js 27227
+200 script https://www.tredye.com/_next/static/chunks/2ixvp2-o07-dy.js 26268
+200 script https://www.tredye.com/_next/static/chunks/2df3cxu9p-xzw.js 32119
+200 script https://www.tredye.com/_next/static/chunks/25pkxhfn9ebwi.js 33656
+200 script https://www.tredye.com/_next/static/chunks/30hj89pzffc6n.js 185971
+200 script https://www.tredye.com/_next/static/chunks/3mosvbqw27ohb.js 43874
+200 script https://www.tredye.com/_next/static/chunks/0fjzp0_hm56-q.js 18653
+200 script https://www.tredye.com/_next/static/chunks/30otqyto6b4e4.js 91904
+200 script https://www.tredye.com/_next/static/chunks/1law3c_cr37jq.js 94081
+200 script https://www.tredye.com/_next/static/chunks/2dq1rtxnk8y31.js 184076
+200 script https://www.tredye.com/ads/t.js?v=analytics2 160
+200 script https://www.tredye.com/_tredye/habit.js?v=5pb1 26358
+200 script https://www.tredye.com/_tredye/promo.js?v=promo3 6855
+200 script https://www.tredye.com/_tredye/site-extras.js?v=adsf2 2282
+200 fetch https://www.tredye.com/sample/config.json 595
+200 fetch https://data.tredye.com/data/config.json 1382
+200 fetch https://www.tredye.com/sample/data/pulse.json 16228
+200 fetch https://www.tredye.com/sample/data/flow.json 124603
+200 fetch https://www.tredye.com/pulse/ 
+200 fetch https://www.tredye.com/academy/ 
+200 fetch https://www.tredye.com/support/ 
+200 fetch https://www.tredye.com/support/__next._tree.txt?_rsc=EI15jo14pcl9f1Ic 537
+200 fetch https://www.tredye.com/pulse/__next._tree.txt?_rsc=EI15jo14pcl9f1Ic 535
+200 fetch https://www.tredye.com/academy/__next._tree.txt?_rsc=EI15jo14pcl9f1Ic 591
+200 fetch https://www.tredye.com/support/__next._index.txt?_rsc=ZHnW6l-qaPfEwXQ9 8221
+200 fetch https://www.tredye.com/support/__next.!KGFwcCk.txt?_rsc=Bq7qNb0Yc_XsQHXO 7894
+200 fetch https://www.tredye.com/pulse/__next.!KGFwcCk.pulse.__PAGE__.txt?_rsc=hM-NoAxVG0KNojZ- 3407
+200 stylesheet https://www.tredye.com/_next/static/chunks/17u_26yhnvo-y.css 4960
+200 fetch https://www.tredye.com/academy/__next.!KGFwcCk.academy.__PAGE__.txt?_rsc=YvcHXum3fdYa3JS5 3588
+200 fetch https://www.tredye.com/support/__next.!KGFwcCk.support.__PAGE__.txt?_rsc=sz1To38t7HJhDEd2 3113
+200 other https://www.tredye.com/icon.svg?icon.1wk3_bpiyu8b6.svg 423
+200 script https://www.tredye.com/_next/static/chunks/1fk_pcc7vgue9.js 10150
+200 script https://www.tredye.com/_next/static/chunks/2tqcc9b697d9n.js 
+200 script https://www.tredye.com/_next/static/chunks/2bd97o7uglpz0.js 14296
+== markets 39
+308 document https://www.tredye.com/markets 
+200 document https://www.tredye.com/markets/ 31729
+200 stylesheet https://www.tredye.com/_tredye/tokens.css?v=1 11924
+200 stylesheet https://www.tredye.com/broker/nse-blur.css?v=10pb1 5031
+200 script https://www.tredye.com/broker/live.js?v=59rl17 97960
+200 script https://www.tredye.com/ads/w.js?v=pr2track1 8521
+200 script https://www.tredye.com/ads/adslot.js?v=5hy1 12369
+200 script https://www.tredye.com/ads/t.js?v=analytics2 160
+200 script https://www.tredye.com/_tredye/habit.js?v=5pb1 26358
+200 script https://www.tredye.com/_tredye/promo.js?v=promo3 6855
+200 script https://www.tredye.com/_tredye/site-extras.js?v=adsf2 2282
+200 fetch https://www.tredye.com/sample/config.json 595
+200 fetch https://www.tredye.com/sample/data/pulse.json 16228
+200 font https://www.tredye.com/_tredye/fonts/1b99372b3eaef0c8-s.p.1gsd1jahc5dg_.woff2 32228
+200 font https://www.tredye.com/_tredye/fonts/83afe278b6a6bb3c-s.p.2bn3s6zvc0dyp.woff2 48432
+200 font https://www.tredye.com/_tredye/fonts/b2ea385cb5ae8625-s.1spbknb88wd48.woff2 14760
+200 font https://www.tredye.com/_tredye/fonts/1bffadaabf893a1e-s.3-6t-g6q0vh0a.woff2 85272
+200 other https://www.tredye.com/icon.svg 423
+== options 84
+308 document https://www.tredye.com/options 
+200 document https://www.tredye.com/options/ 69223
+200 stylesheet https://www.tredye.com/broker/nse-blur.css?v=10pb1 5031
+200 script https://www.tredye.com/broker/live.js?v=59rl17 97960
+200 script https://www.tredye.com/ads/w.js?v=pr2track1 8521
+200 script https://www.tredye.com/ads/adslot.js?v=5hy1 12369
+200 script https://www.tredye.com/ads/t.js?v=analytics2 160
+200 script https://www.tredye.com/_tredye/habit.js?v=5pb1 26358
+200 script https://www.tredye.com/_tredye/promo.js?v=promo3 6855
+200 script https://www.tredye.com/_tredye/site-extras.js?v=adsf2 2282
+200 script https://www.tredye.com/_tredye/daily-seo-links.js?v=dseo3 1869
+200 fetch https://www.tredye.com/sample/config.json 595
+200 fetch https://data.tredye.com/data/config.json 1382
+200 fetch https://www.tredye.com/sample/data/options@symbol-NIFTY.json 4585
+200 fetch https://www.tredye.com/pulse/ 
+200 fetch https://www.tredye.com/academy/ 
+200 fetch https://www.tredye.com/support/ 
+200 fetch https://www.tredye.com/pulse/__next._tree.txt?_rsc=cLGT8rWNCcWTDcVO 535
+200 fetch https://www.tredye.com/academy/__next._tree.txt?_rsc=cLGT8rWNCcWTDcVO 591
+200 fetch https://www.tredye.com/support/__next._tree.txt?_rsc=cLGT8rWNCcWTDcVO 537
+200 fetch https://www.tredye.com/pulse/__next._index.txt?_rsc=iGTzCZKi34EXbu69 8221
+200 fetch https://www.tredye.com/pulse/__next.!KGFwcCk.txt?_rsc=cTi9zDNnPlB5EwVr 7894
+200 fetch https://www.tredye.com/pulse/__next.!KGFwcCk.pulse.__PAGE__.txt?_rsc=KFDvXlirR1mkiElY 3407
+200 fetch https://www.tredye.com/academy/__next.!KGFwcCk.academy.__PAGE__.txt?_rsc=_0lN-gggv-1aT56o 3588
+200 fetch https://www.tredye.com/support/__next.!KGFwcCk.support.__PAGE__.txt?_rsc=-FXovzbLJ4dIejDe 3113
+200 other https://www.tredye.com/icon.svg?icon.1wk3_bpiyu8b6.svg 423
+200 script https://www.tredye.com/_tredye/fx-options.js?v=3pb1 8796
+== liquidity 80
+308 document https://www.tredye.com/liquidity 
+200 document https://www.tredye.com/liquidity/ 67492
+200 stylesheet https://www.tredye.com/broker/nse-blur.css?v=10pb1 5031
+200 script https://www.tredye.com/broker/live.js?v=59rl17 97960
+200 script https://www.tredye.com/ads/w.js?v=pr2track1 8521
+200 script https://www.tredye.com/ads/adslot.js?v=5hy1 12369
+200 script https://www.tredye.com/ads/t.js?v=analytics2 160
+200 script https://www.tredye.com/_tredye/habit.js?v=5pb1 26358
+200 script https://www.tredye.com/_tredye/promo.js?v=promo3 6855
+200 script https://www.tredye.com/_tredye/site-extras.js?v=adsf2 2282
+200 fetch https://www.tredye.com/sample/config.json 595
+200 fetch https://data.tredye.com/data/config.json 1382
+200 fetch https://www.tredye.com/sample/data/liq@symbol-NIFTY__tf-15m.json 107293
+200 fetch https://www.tredye.com/pulse/ 
+200 fetch https://www.tredye.com/academy/ 
+200 fetch https://www.tredye.com/support/ 
+200 fetch https://www.tredye.com/pulse/__next._tree.txt?_rsc=LsaKfir8j2OnQAYW 535
+200 fetch https://www.tredye.com/academy/__next._tree.txt?_rsc=LsaKfir8j2OnQAYW 591
+200 fetch https://www.tredye.com/support/__next._tree.txt?_rsc=LsaKfir8j2OnQAYW 537
+200 fetch https://www.tredye.com/pulse/__next._index.txt?_rsc=ZRniUCqpy9yupdRE 8221
+200 fetch https://www.tredye.com/pulse/__next.!KGFwcCk.txt?_rsc=TxOqbfttqg7O0Neb 7894
+200 fetch https://www.tredye.com/pulse/__next.!KGFwcCk.pulse.__PAGE__.txt?_rsc=A0UVAq9NgEWmKDc6 3407
+200 fetch https://www.tredye.com/academy/__next.!KGFwcCk.academy.__PAGE__.txt?_rsc=jigjDB_vlX9eD9zV 3588
+200 fetch https://www.tredye.com/support/__next.!KGFwcCk.support.__PAGE__.txt?_rsc=pDxutlaWyDtbxwuG 3113
+200 other https://www.tredye.com/icon.svg?icon.1wk3_bpiyu8b6.svg 423
+== strength 79
+308 document https://www.tredye.com/strength 
+200 document https://www.tredye.com/strength/ 71750
+200 stylesheet https://www.tredye.com/broker/nse-blur.css?v=10pb1 5031
+200 script https://www.tredye.com/broker/live.js?v=59rl17 97960
+200 script https://www.tredye.com/ads/w.js?v=pr2track1 8521
+200 script https://www.tredye.com/ads/adslot.js?v=5hy1 12369
+200 script https://www.tredye.com/ads/t.js?v=analytics2 160
+200 script https://www.tredye.com/_tredye/habit.js?v=5pb1 26358
+200 script https://www.tredye.com/_tredye/promo.js?v=promo3 6855
+200 script https://www.tredye.com/_tredye/site-extras.js?v=adsf2 2282
+200 fetch https://www.tredye.com/sample/config.json 595
+200 fetch https://data.tredye.com/data/config.json 1382
+200 fetch https://www.tredye.com/pulse/ 
+200 fetch https://www.tredye.com/academy/ 
+200 fetch https://www.tredye.com/support/ 
+200 fetch https://www.tredye.com/sample/data/strength.json 130000
+200 fetch https://www.tredye.com/pulse/__next._tree.txt?_rsc=61EzHPYrtN-4j2Eo 535
+200 fetch https://www.tredye.com/academy/__next._tree.txt?_rsc=61EzHPYrtN-4j2Eo 591
+200 fetch https://www.tredye.com/support/__next._tree.txt?_rsc=61EzHPYrtN-4j2Eo 537
+200 fetch https://www.tredye.com/pulse/__next._index.txt?_rsc=xx_stO1xXOrdeCXi 8221
+200 fetch https://www.tredye.com/pulse/__next.!KGFwcCk.txt?_rsc=0FXMqNNkF7sSAjaH 7894
+200 other https://www.tredye.com/icon.svg?icon.1wk3_bpiyu8b6.svg 423
+200 fetch https://www.tredye.com/pulse/__next.!KGFwcCk.pulse.__PAGE__.txt?_rsc=GDLKma70EYaTjGi2 3407
+200 fetch https://www.tredye.com/academy/__next.!KGFwcCk.academy.__PAGE__.txt?_rsc=J0FQr7AOv5kSBgjf 3588
+200 fetch https://www.tredye.com/support/__next.!KGFwcCk.support.__PAGE__.txt?_rsc=IlhuomllAjmNbC9n 3113
+== radar 82
+308 document https://www.tredye.com/radar 
+200 document https://www.tredye.com/radar/ 67830
+200 stylesheet https://www.tredye.com/broker/nse-blur.css?v=10pb1 5031
+200 script https://www.tredye.com/broker/live.js?v=59rl17 97960
+200 script https://www.tredye.com/ads/w.js?v=pr2track1 8521
+200 script https://www.tredye.com/ads/adslot.js?v=5hy1 12369
+200 script https://www.tredye.com/ads/t.js?v=analytics2 160
+200 script https://www.tredye.com/_tredye/habit.js?v=5pb1 26358
+200 script https://www.tredye.com/_tredye/promo.js?v=promo3 6855
+200 script https://www.tredye.com/_tredye/site-extras.js?v=adsf2 2282
+200 fetch https://www.tredye.com/sample/config.json 595
+200 fetch https://data.tredye.com/data/config.json 1382
+200 fetch https://www.tredye.com/sample/data/radar@symbol-RELIANCE.json 34023
+200 fetch https://www.tredye.com/pulse/ 
+200 fetch https://www.tredye.com/academy/ 
+200 fetch https://www.tredye.com/support/ 
+200 fetch https://www.tredye.com/pulse/__next._tree.txt?_rsc=m_f8ikZz6Qd6bdiC 535
+200 fetch https://www.tredye.com/academy/__next._tree.txt?_rsc=m_f8ikZz6Qd6bdiC 591
+200 fetch https://www.tredye.com/support/__next._tree.txt?_rsc=m_f8ikZz6Qd6bdiC 537
+200 other https://www.tredye.com/icon.svg?icon.1wk3_bpiyu8b6.svg 423
+200 fetch https://www.tredye.com/pulse/__next._index.txt?_rsc=pi-YhAp7v3_LZmcX 8221
+200 fetch https://www.tredye.com/pulse/__next.!KGFwcCk.txt?_rsc=-_jHACfFIJ0k6uce 7894
+200 fetch https://www.tredye.com/pulse/__next.!KGFwcCk.pulse.__PAGE__.txt?_rsc=iqCWoAtselWoJcV0 3407
+200 fetch https://www.tredye.com/academy/__next.!KGFwcCk.academy.__PAGE__.txt?_rsc=X0YcwrroWwERxsHr 3588
+200 fetch https://www.tredye.com/support/__next.!KGFwcCk.support.__PAGE__.txt?_rsc=k2JcN3P1PMV-HfDH 3113
+200 script https://www.tredye.com/_tredye/fx-radar.js?v=2pb1 8673
+200 fetch https://www.tredye.com/sample/data/symbols.json 18137
