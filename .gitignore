@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+*.pyc
+logs/
+state/
+memory/
+upstream_repos/
+backup_*/
+*.bak
+*_bak
