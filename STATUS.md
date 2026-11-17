@@ -32,6 +32,15 @@ conta real só com "CONFIRMAR"; kill switch mantido. **Sem GitHub Actions.**
 | Pepperstone | STUB (desligado) | cTrader Open API ou MT5 | MT5 só Windows |
 | IQ Option | STUB (desligado) — **risco ToS/bloqueio** | sem API oficial (libs não oficiais) | manter desligado |
 
+## Execução Bybit 24/7 (PR `feat/bybit-execucao-24x7`) — 17/11/2026 08:22 BRT
+- [x] Bybit V5 completo: REST assinado (HMAC) com retry/backoff, rate limit e ressincronização de relógio; WS privado (order/execution/position/wallet) com reconexão automática; spot + perp linear USDT; opções só dados públicos (`brokers/bybit*.py`).
+- [x] Motor de execução (`execution/`): `orderLinkId` idempotente, reconciliação na partida/reconexão, kill switch com fechamento `reduceOnly`, estado em SQLite (`GOLTRADER_STATE_DIR`), limites (posição máx., perda diária, ordens/min), worker 24/7 + healthcheck + CLI, lease de instância única.
+- [x] Travas: Testnet padrão; LIVE só com `BYBIT_TESTNET=false` + `GOLTRADER_ALLOW_LIVE=true` + `ANALYZER_MODE`≠true + "CONFIRMAR".
+- [x] Adapters extras (todos desligados por padrão, mesma interface): Binance/OKX/Coinbase/Kraken via ccxt, IBKR via ib_insync, Pepperstone (cTrader — lógica pronta, **transporte pendente**), IQ Option (**não oficial**, só PRACTICE, exige `GOLTRADER_ENABLE_UNOFFICIAL=true`).
+- [x] 78 testes pytest sem rede, todos verdes (`pytest tests`).
+- [ ] **Bybit READY** só após E2E na Testnet com chaves reais de Testnet (pendente: chaves). Adapters extras seguem PARTIAL/STUB (só mock, sem E2E).
+- Documentação: `execution/README.md`.
+
 ## Pendente
 - Backend autenticado (hoje `api/server.py` tem CORS `*` e sem auth — **não expor na VPS assim**).
 - Bybit READY (E2E Testnet), adapters ccxt, IBKR, cTrader.

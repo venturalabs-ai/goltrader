@@ -1,0 +1,4 @@
+# Dependências OPCIONAIS dos adapters extras (todos desligados por padrão). Instale só o que for usar.
+ccxt>=4.3          # Binance / OKX / Coinbase / Kraken
+ib_insync>=0.9.86  # Interactive Brokers (TWS/Gateway); alternativa mantida: ib_async
+# iqoptionapi      # IQ Option (NÃO OFICIAL — risco de ToS/bloqueio); instalar à parte, por conta e risco

@@ -30,7 +30,7 @@ def catalog() -> List[dict]:
     for name, cls in ALL.items():
         out.append({"name": name, "display_name": cls.display_name, "readiness": cls.readiness.value,
                     "asset_classes": list(cls.asset_classes), "official_api": cls.official_api,
-                    "enabled": name in en, "notes": cls.notes})
+                    "enabled": name in en, "notes": cls.notes, "unofficial": cls.unofficial})
     return out
 
 

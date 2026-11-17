@@ -1,7 +1,7 @@
 import pytest
 
 from brokers import Mode, OrderRequest, catalog, get_broker
-from brokers.base import KILL_FLAG, KillSwitchActive, LiveNotConfirmed
+from brokers.base import KillSwitchActive, LiveNotConfirmed, kill_flag_paths
 
 
 def test_catalog_has_all_and_only_bybit_enabled(monkeypatch):
@@ -25,9 +25,9 @@ def test_live_requires_confirmation(monkeypatch):
         get_broker("bybit", Mode.LIVE, confirmation="sim")
 
 
-def test_stub_not_implemented(monkeypatch):
-    monkeypatch.setenv("GT_BROKERS_ENABLED", "iqoption")
-    b = get_broker("iqoption", Mode.TESTNET)
+def test_pepperstone_stub_without_transport(monkeypatch):
+    monkeypatch.setenv("GT_BROKERS_ENABLED", "pepperstone")
+    b = get_broker("pepperstone", Mode.TESTNET)
     with pytest.raises(NotImplementedError):
         b.balance()
 
@@ -37,10 +37,11 @@ def test_paper_order_and_kill_switch(monkeypatch, tmp_path):
     b = get_broker("bybit", Mode.PAPER)
     r = b.place_order(OrderRequest("BTCUSDT", "buy", 0.001, client_id="t1"))
     assert r.ok and r.status == "FILLED_SIMULATED"
-    KILL_FLAG.parent.mkdir(parents=True, exist_ok=True)
-    KILL_FLAG.write_text("test")
+    flag = kill_flag_paths()[0]
+    flag.parent.mkdir(parents=True, exist_ok=True)
+    flag.write_text("test")
     try:
         with pytest.raises(KillSwitchActive):
             b.place_order(OrderRequest("BTCUSDT", "buy", 0.001))
     finally:
-        KILL_FLAG.unlink()
+        flag.unlink()
