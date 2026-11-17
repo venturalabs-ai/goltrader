@@ -78,7 +78,10 @@ $reg = [ordered]@{}
 
 function Start-Servico([string]$nome, [string]$exe, [string[]]$args_, [string]$cwd) {
     $out = Join-Path $logs "$nome.out.log"; $err = Join-Path $logs "$nome.err.log"
-    $p = Start-Process -FilePath $exe -ArgumentList $args_ -WorkingDirectory $cwd -WindowStyle Hidden -PassThru -RedirectStandardOutput $out -RedirectStandardError $err
+    $extra = @{}
+    $isWin = ($PSVersionTable.PSEdition -eq 'Desktop') -or ($null -ne (Get-Variable -Name IsWindows -ErrorAction SilentlyContinue) -and $IsWindows)
+    if ($isWin) { $extra['WindowStyle'] = 'Hidden' }   # -WindowStyle só existe no Windows
+    $p = Start-Process -FilePath $exe -ArgumentList $args_ -WorkingDirectory $cwd -PassThru -RedirectStandardOutput $out -RedirectStandardError $err @extra
     Write-Info "$nome iniciado (PID $($p.Id)); logs: $out"
     return $p.Id
 }
