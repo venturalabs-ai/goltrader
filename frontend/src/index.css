@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --gt-bg: #121318;
+  --gt-panel: #191c23;
+  --gt-input: #1a1c23;
+  --gt-surface: #212a34;
+  --gt-muted: #646c78;
+  --gt-accent: #40d7dd;
+}
+
+html, body { background: var(--gt-bg); color: #e6e9ee; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+
+/* números tabulares em tabelas, preços e relógios */
+.tnum, table, .font-mono { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum' 1; }
+
+::-webkit-scrollbar { height: 8px; width: 8px; }
+::-webkit-scrollbar-thumb { background: var(--gt-surface); border-radius: 4px; }

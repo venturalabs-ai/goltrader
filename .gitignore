@@ -16,3 +16,10 @@ backup_*/
 parking_data.csv
 .rea/
 node_modules/
+
+# frontend / backend build
+frontend/dist/
+frontend/.vite/
+*.tsbuildinfo
+.pytest_cache/
+backend/.env

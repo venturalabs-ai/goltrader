@@ -1,6 +1,6 @@
 # STATUS — Goltrader Híbrido
 
-Atualizado: 17/11/2026 06:11 BRT
+Atualizado: 17/11/2026 08:05 BRT
 
 ## O que está sendo feito
 Construção do **Goltrader híbrido** (notebook + VPS Hostinger 1925412) juntando: interface de fluxo do Tredye (reimplementada),
@@ -14,6 +14,10 @@ conta real só com "CONFIRMAR"; kill switch mantido. **Sem GitHub Actions.**
 - [x] Análise do **OpenAlgo**: `docs/engenharia-reversa/openalgo.md` (sem Bybit/B3; `deltaexchange` como molde cripto).
 - [x] `docs/PLANO-HIBRIDO.md`: arquitetura, paleta, especificação do Pulse cripto, tarefas por fase.
 - [x] Camada multi-corretora `brokers/` (interface comum, modos PAPER/TESTNET/LIVE, confirmação, kill switch, registro desligado por padrão) + 5 testes.
+
+- [x] **Pulse backend + frontend (branch `feat/pulse-backend-frontend`)**: FastAPI + WS `/ws/pulse`, funil de confluência (`funnel_engine.py`), Order Blocks, buildup, cesta concorrente, conectores Bybit V5 e IQ Option (não oficial), scanner de notícias RSS, suíte de opções (GEX, gamma flip, IV smile, max pain, estruturas/payoff), frontend React/Tailwind/Lightweight Charts com Suíte de Opções na mesma tela. Auth por token, CORS por env, LIVE só com `GOLTRADER_ALLOW_LIVE` + "CONFIRMAR", kill switch, limites. Testes pytest + build do frontend OK.
+  - **Simulado × real:** ver README. Padrão `GOLTRADER_DATA_SOURCE=simulado` (tudo sintético, funil só paper); `=bybit` usa feed público real (testado ao vivo).
+  - **Notebook:** `C:\Users\Ventura\goltrader\backend` (`uvicorn main:app`) e `...\frontend` (`npm run dev`) — passos no README.
 
 ## Corretoras (adapters) — estado
 | Corretora | Estado | API | Observação |
@@ -30,7 +34,7 @@ conta real só com "CONFIRMAR"; kill switch mantido. **Sem GitHub Actions.**
 ## Pendente
 - Backend autenticado (hoje `api/server.py` tem CORS `*` e sem auth — **não expor na VPS assim**).
 - Bybit READY (E2E Testnet), adapters ccxt, IBKR, cTrader.
-- Pulse cripto (fluxo, breadth, humor) e frontend React com Sankey.
+- Pulse: Sankey/breadth/humor; OB multi-timeframe (5m/1m); PnL realizado real ligado ao limite de perda diária; fechar posições no kill switch; IQ_DIGITAL; provedor real de calendário econômico; teste E2E na Testnet Bybit (ordens) — **ainda não executado**.
 - Docker + deploy na VPS atrás do Traefik (build na VPS, deploy key somente-leitura).
 - Paridade do notebook (mesmo código).
 
