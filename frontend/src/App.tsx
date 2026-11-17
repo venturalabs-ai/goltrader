@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlowChart } from './components/FlowChart';
 import { CommandBar, Command, ExchangeClock, ModeSwitch } from './components/CommandBar';
 import { OptionsSuite, ExecLeg } from './components/OptionsSuite';
+import { RiskControlPanel } from './components/RiskControlPanel';
 import { apiPost, getToken, setToken, wsUrl } from './config';
 import type { FlowBubble, Payload } from './types';
 
@@ -66,6 +67,10 @@ export default function App() {
     const typed = window.prompt('ATENÇÃO: ir para LIVE envia ordens às corretoras.\nDigite CONFIRMAR para continuar:');
     if (typed === null) return;
     await call('/api/v1/toggle_mode', { confirm: typed.trim() });
+  };
+  const resetBreaker = async (confirm: string) => {
+    const r = await call('/api/v1/risk/reset_breaker', { confirm });
+    if (r.ok) setNotice('Circuit breaker resetado. O funil continua PAUSADO (religue manualmente).');
   };
   const toggleAutonomous = () => call('/api/v1/toggle_autonomous');
   const killSwitch = async () => {
@@ -209,6 +214,8 @@ export default function App() {
         </section>
 
         <aside className="col-span-12 lg:col-span-4 flex flex-col gap-4">
+          <RiskControlPanel risk={data?.risk_telemetry} ledger={data?.trust_ledger} onResetBreaker={resetBreaker} />
+
           <div className="bg-gt-panel border border-gt-surface rounded-xl p-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-bold uppercase tracking-wider text-slate-200">Disparo Rápido (Bybit Perp)</span>

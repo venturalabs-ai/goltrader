@@ -77,3 +77,7 @@ class ToggleModeBody(BaseModel):
 
 class KillSwitchBody(BaseModel):
     active: bool = True
+
+
+class ResetBreakerBody(BaseModel):
+    confirm: Optional[str] = None

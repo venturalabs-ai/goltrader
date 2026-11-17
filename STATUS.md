@@ -1,6 +1,6 @@
 # STATUS — Goltrader Híbrido
 
-Atualizado: 17/11/2026 08:05 BRT
+Atualizado: 17/11/2026 08:25 BRT
 
 ## O que está sendo feito
 Construção do **Goltrader híbrido** (notebook + VPS Hostinger 1925412) juntando: interface de fluxo do Tredye (reimplementada),
@@ -16,6 +16,7 @@ conta real só com "CONFIRMAR"; kill switch mantido. **Sem GitHub Actions.**
 - [x] Camada multi-corretora `brokers/` (interface comum, modos PAPER/TESTNET/LIVE, confirmação, kill switch, registro desligado por padrão) + 5 testes.
 
 - [x] **Pulse backend + frontend (branch `feat/pulse-backend-frontend`)**: FastAPI + WS `/ws/pulse`, funil de confluência (`funnel_engine.py`), Order Blocks, buildup, cesta concorrente, conectores Bybit V5 e IQ Option (não oficial), scanner de notícias RSS, suíte de opções (GEX, gamma flip, IV smile, max pain, estruturas/payoff), frontend React/Tailwind/Lightweight Charts com Suíte de Opções na mesma tela. Auth por token, CORS por env, LIVE só com `GOLTRADER_ALLOW_LIVE` + "CONFIRMAR", kill switch, limites. Testes pytest + build do frontend OK.
+  - **Risco/Confiança (t316u):** `nod_core/agent_runtime.py` (NodSecretVault, NodTrustGate, TrustDecision, Telegram opcional) e `risk/risk_manager.py` (Kelly fracionado, breakeven, trailing, circuit breaker c/ fechamento reduce-only em LIVE) + `RiskControlPanel`. Portão único para todas as ordens; IQ desligada por padrão. **WhatsApp/QR: fora do escopo.** Reimplementação independente (n8n-io/nod é Apache-2.0, só inspiração, creditado no NOTICE).
   - **Simulado × real:** ver README. Padrão `GOLTRADER_DATA_SOURCE=simulado` (tudo sintético, funil só paper); `=bybit` usa feed público real (testado ao vivo).
   - **Notebook:** `C:\Users\Ventura\goltrader\backend` (`uvicorn main:app`) e `...\frontend` (`npm run dev`) — passos no README.
 

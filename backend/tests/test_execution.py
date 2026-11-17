@@ -43,6 +43,7 @@ async def test_live_routes_bybit_testnet_default(monkeypatch):
     monkeypatch.setenv("BYBIT_API_KEY", "k")
     monkeypatch.setenv("BYBIT_API_SECRET", "s")
     state.analyzer_mode = False
+    state.risk.set_wallet_equity(10000.0, "BYBIT_TESTNET")
     client = state.get_bybit()
     assert client.testnet is True and "testnet" in client.base_url
     sent = {}
@@ -64,6 +65,7 @@ async def test_live_leverage_cap_and_option_needs_price(monkeypatch):
     monkeypatch.setenv("BYBIT_API_KEY", "k")
     monkeypatch.setenv("BYBIT_API_SECRET", "s")
     state.analyzer_mode = False
+    state.risk.set_wallet_equity(10000.0, "BYBIT_TESTNET")
     r = await execute_single_order(order(leverage=50))
     assert r["status"] == "REJECTED" and "alavancagem" in r["error"]
     r = await execute_single_order(order("BYBIT_OPT", symbol="BTC-27DEC26-100000-C-USDT"))
@@ -72,6 +74,7 @@ async def test_live_leverage_cap_and_option_needs_price(monkeypatch):
 
 async def test_live_iq_digital_not_implemented(monkeypatch):
     monkeypatch.setenv("GOLTRADER_ALLOW_LIVE", "true")
+    monkeypatch.setenv("GOLTRADER_ENABLE_IQ", "true")
     state.analyzer_mode = False
     r = await execute_single_order(order("IQ_DIGITAL", symbol="EURUSD-OTC"))
     assert r["status"] == "REJECTED" and "IQ_DIGITAL" in r["error"]
@@ -80,6 +83,7 @@ async def test_live_iq_digital_not_implemented(monkeypatch):
 async def test_live_without_credentials_rejected(monkeypatch):
     monkeypatch.setenv("GOLTRADER_ALLOW_LIVE", "true")
     state.analyzer_mode = False
+    state.risk.set_wallet_equity(10000.0, "BYBIT_TESTNET")
     r = await execute_single_order(order())
     assert r["status"] == "REJECTED" and "credenciais" in r["error"]
 

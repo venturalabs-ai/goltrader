@@ -93,6 +93,7 @@ class BybitV5AsyncClient:
         price: Optional[str] = None,
         take_profit: Optional[str] = None,
         stop_loss: Optional[str] = None,
+        reduce_only: bool = False,
     ) -> Dict:
         """Envia ordem assíncrona individual na Bybit V5 sem bloquear o event loop."""
         payload: Dict[str, str] = {
@@ -106,6 +107,8 @@ class BybitV5AsyncClient:
         }
         if category == "spot" and order_type == "Market":
             payload["marketUnit"] = "baseCoin"  # qty em moeda base (padrão da Bybit seria cotação em compras)
+        if reduce_only:
+            payload["reduceOnly"] = True
         if price:
             payload["price"] = str(price)
         if take_profit:
@@ -124,6 +127,32 @@ class BybitV5AsyncClient:
             "/v5/position/set-leverage",
             {"category": "linear", "symbol": symbol, "buyLeverage": lev, "sellLeverage": lev},
         )
+
+    async def set_trading_stop(self, symbol: str, stop_loss: str) -> Dict:
+        """Move o stop da posição (one-way, positionIdx 0) — usado por breakeven/trailing em LIVE."""
+        return await self._post(
+            "/v5/position/trading-stop",
+            {"category": "linear", "symbol": symbol, "stopLoss": str(stop_loss), "positionIdx": 0},
+        )
+
+    async def _get_private(self, path: str, params: Dict[str, str]) -> Dict:
+        if not self.has_credentials:
+            return {"retCode": -1, "retMsg": "credenciais Bybit ausentes (BYBIT_API_KEY/BYBIT_API_SECRET)"}
+        from urllib.parse import urlencode
+        query = urlencode(params)
+        headers = self._sign_payload(query)  # GET assina a query string
+        session = await self.get_session()
+        async with session.get(f"{self.base_url}{path}?{query}", headers=headers) as resp:
+            try:
+                return await resp.json(content_type=None)
+            except Exception:
+                return {"retCode": -2, "retMsg": f"resposta não-JSON (HTTP {resp.status})"}
+
+    async def get_wallet_balance(self) -> Dict:
+        return await self._get_private("/v5/account/wallet-balance", {"accountType": "UNIFIED"})
+
+    async def get_positions(self, settle_coin: str = "USDT") -> Dict:
+        return await self._get_private("/v5/position/list", {"category": "linear", "settleCoin": settle_coin})
 
     async def cancel_all(self, category: str = "linear", settle_coin: str = "USDT") -> Dict:
         return await self._post("/v5/order/cancel-all", {"category": category, "settleCoin": settle_coin})

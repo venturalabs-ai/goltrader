@@ -8,10 +8,15 @@ from collections import deque
 from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional
 
+import logging
+
 from config import env_bool, env_float, env_int
 from connectors.bybit_async import BybitV5AsyncClient
 from connectors.iqoption_async import IQOptionAsyncClient
 from models import SmartOrderRequest
+from nod_core.agent_runtime import NodSecretVault, NodTrustGate, RedactingFilter, TelegramNotifier
+from risk.brokers import BybitBroker
+from risk.risk_manager import InstitutionalRiskManager
 
 BRT = timezone(timedelta(hours=-3))
 BYBIT_CATEGORY = {"BYBIT_PERP": "linear", "BYBIT_SPOT": "spot", "BYBIT_OPT": "option"}
@@ -32,6 +37,19 @@ class EngineState:
         self._sems: Dict[int, asyncio.Semaphore] = {}
         self.bybit: Optional[BybitV5AsyncClient] = None
         self.iq: Optional[IQOptionAsyncClient] = None
+        self.prices: Dict[str, float] = {}  # último preço por símbolo (atualizado pelo engine a cada tick)
+        self.vault = NodSecretVault()
+        self.notifier = TelegramNotifier(self.vault)
+        self.risk = InstitutionalRiskManager(
+            broker=BybitBroker(self.get_bybit), notifier=self.notifier,
+            on_realized=lambda pnl, pos: self.register_pnl(pnl),
+            on_breaker=self._on_breaker,
+        )
+        self.gate = NodTrustGate(self)
+
+    def _on_breaker(self, tripped: bool):
+        if tripped:
+            self.autonomous_funnel = False  # breaker desliga o funil (reset NÃO religa)
 
     @staticmethod
     def _today() -> str:
@@ -70,23 +88,6 @@ class EngineState:
     def bybit_testnet() -> bool:
         import os
         return os.getenv("BYBIT_TESTNET", "true").lower() == "true"
-
-    def reject_reason(self) -> Optional[str]:
-        """Guardas globais. Reserva o slot do rate limit de forma atômica (sem await entre checar e registrar)."""
-        self.roll_day()
-        if self.kill_switch:
-            return "KILL_SWITCH ativo: novas ordens bloqueadas"
-        limit = env_float("GOLTRADER_MAX_DAILY_LOSS_USD", 200)
-        if limit > 0 and self.daily_pnl_usd <= -limit:
-            return f"perda diária máxima atingida (US$ {limit:.2f})"
-        now = time.time()
-        while self.order_times and now - self.order_times[0] > 60:
-            self.order_times.popleft()
-        per_min = env_int("GOLTRADER_MAX_ORDERS_PER_MIN", 30)
-        if len(self.order_times) >= per_min:
-            return f"limite de {per_min} ordens/min atingido"
-        self.order_times.append(now)
-        return None
 
     def get_bybit(self) -> BybitV5AsyncClient:
         if self.bybit is None:
@@ -143,11 +144,11 @@ async def _live_bybit(order: SmartOrderRequest) -> Dict:
     if cat == "option" and not order.price:
         return {"status": "REJECTED", "error": "ordem de opção exige preço limite"}
     resp = await client.place_order(
-        category=cat, symbol=order.symbol, side=order.side.capitalize(), qty=f"{order.amount:g}",
+        category=cat, symbol=order.symbol, side=order.side.capitalize(), qty=f"{order.amount:.10g}",
         order_type="Limit" if order.price else "Market",
-        price=f"{order.price:g}" if order.price else None,
-        take_profit=f"{order.take_profit:g}" if order.take_profit and cat == "linear" else None,
-        stop_loss=f"{order.stop_loss:g}" if order.stop_loss and cat == "linear" else None,
+        price=f"{order.price:.10g}" if order.price else None,
+        take_profit=f"{order.take_profit:.10g}" if order.take_profit and cat == "linear" else None,
+        stop_loss=f"{order.stop_loss:.10g}" if order.stop_loss and cat == "linear" else None,
     )
     if resp.get("retCode") == 0:
         return {"status": "SUBMITTED", "order_id": resp.get("result", {}).get("orderId"), "exchange_latency_ms": resp.get("latency_ms")}
@@ -168,25 +169,52 @@ async def _live_iq(order: SmartOrderRequest) -> Dict:
     return {"status": res["status"], "order_id": res.get("order_id"), **({"error": res["error"]} if "error" in res else {})}
 
 
+def _register_perp(order: SmartOrderRequest, paper: bool, stop_loss: Optional[float]):
+    """Registra o lote no gerenciador de risco (breakeven/trailing/breaker). Só perpétuos lineares."""
+    if order.venue != "BYBIT_PERP":
+        return None
+    entry = state.prices.get(order.symbol, 0.0)
+    if entry <= 0:
+        return None
+    return state.risk.register_position(
+        symbol=order.symbol, side=order.side, entry=entry, qty=order.amount, leverage=order.leverage or 1,
+        stop_loss=stop_loss, paper=paper, data_source=state.data_source, take_profit=order.take_profit,
+    )
+
+
 async def execute_single_order(order: SmartOrderRequest, origin: str = "MANUAL") -> Dict:
-    """Paper no analyzer; live só com analyzer_mode=False (exige toggle_mode+CONFIRMAR+GOLTRADER_ALLOW_LIVE).
+    """Todo caminho de ordem passa por state.gate.verify_order (NodTrustGate = ponto único de aprovação).
+    Paper no analyzer; live só com analyzer_mode=False (toggle_mode+CONFIRMAR+GOLTRADER_ALLOW_LIVE).
     Ordens do FUNIL com dados SIMULADOS são sempre paper."""
     async with state.semaphore():
         t0 = time.perf_counter()
-        reason = state.reject_reason()
-        if reason:
-            return _record(order, "REJECTED", True, origin, t0, error=reason)
+        decision = state.gate.verify_order(order, origin)
+        if not decision.allowed:
+            return _record(order, "REJECTED", True, origin, t0, error=decision.message, trust_code=decision.code)
+        paper = decision.paper
 
-        paper = state.analyzer_mode or (origin == "FUNIL" and state.data_source != "BYBIT")
-        if not paper and not env_bool("GOLTRADER_ALLOW_LIVE", False):
-            return _record(order, "REJECTED", True, origin, t0, error="GOLTRADER_ALLOW_LIVE não habilitado")
+        # stop inicial: o informado ou o padrão do risk manager (em LIVE vai junto na ordem = proteção na corretora)
+        stop = order.stop_loss
+        if order.venue == "BYBIT_PERP" and not stop:
+            stop = state.risk.default_stop(order.side, state.prices[order.symbol])
+            order = order.model_copy(update={"stop_loss": stop})
 
         if paper:
             await asyncio.sleep(0.015)  # latência simulada
-            return _record(order, "FILLED_PAPER", True, origin, t0)
+            rec = _record(order, "FILLED_PAPER", True, origin, t0)
+            pos = _register_perp(order, True, stop)
+            if pos:
+                rec["position_id"] = pos.id
+            return rec
 
         try:
             res = await (_live_bybit(order) if order.venue.startswith("BYBIT") else _live_iq(order))
         except Exception as e:
-            res = {"status": "ERROR", "error": f"{type(e).__name__}: {str(e)[:160]}"}
-        return _record(order, res.pop("status"), False, origin, t0, **res)
+            res = {"status": "ERROR", "error": f"{type(e).__name__}: {state.vault.redact(str(e))[:160]}"}
+        status = res.pop("status")
+        rec = _record(order, status, False, origin, t0, **res)
+        if status == "SUBMITTED":
+            pos = _register_perp(order, False, stop)
+            if pos:
+                rec["position_id"] = pos.id
+        return rec

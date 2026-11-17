@@ -11,3 +11,7 @@ Goltrader (este repositório) é distribuído sob **GNU AGPL-3.0** (ver `LICENSE
   (modo demo) servidos publicamente pelo site e existem só como referência de análise; os direitos pertencem aos
   respectivos titulares. Remova-as se o titular solicitar.
 - **REA** (https://github.com/morluto/rea, MIT): ferramenta usada para a análise; não faz parte deste código.
+- **n8n-io/nod** (https://github.com/n8n-io/nod, Apache-2.0): apenas **inspiração conceitual** (agente que pede aprovação antes de agir,
+  cofre de segredos e portão de confiança). **Nenhum código do nod foi copiado ou incluído**; `backend/nod_core/` é uma
+  reimplementação independente. Por cortesia e transparência, o projeto é creditado aqui; se código dele vier a ser importado,
+  mantenha a licença Apache-2.0 e os avisos de copyright originais.

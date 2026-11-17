@@ -32,4 +32,18 @@ export interface Payload {
   order_blocks: OrderBlock[]; derivatives_pulse: PulseRow[]; funnel_signal: null | { direction: string; confidence: number; reasons: string[] };
   z_score: number | null; news_sentiment_btc: number; active_positions: Execution[]; options_analytics: OptionsAnalytics | null;
   market_news: MarketNews; economic_calendar: EconomicCalendar;
+  risk_telemetry: RiskTelemetry; trust_ledger: TrustEntry[];
 }
+
+export interface RiskPosition {
+  id: string; symbol: string; side: 'BUY' | 'SELL'; entry: number; qty: number; leverage: number; size_usd: number;
+  stop_loss: number; initial_sl: number; stop_kind: string; paper: boolean; unrealized_pnl: number; move_pct: number; breakeven_done: boolean;
+}
+export interface RiskTelemetry {
+  equity: number | null; equity_source: string; equity_label: string; day: string; day_start_equity: number | null;
+  drawdown_pct: number; max_daily_drawdown_pct: number; breaker: { tripped: boolean; reason: string; ts: number | null };
+  win_rate_rolling: number; payoff_ratio: number; stats_mode: 'NEUTRO' | 'KELLY'; trades_in_window: number; min_trades_for_kelly: number;
+  kelly_full: number; kelly_fraction: number; kelly_applied: number; unrealized_pnl: number; realized_today: number;
+  positions: RiskPosition[]; events: { ts: number; kind: string; msg: string }[];
+}
+export interface TrustEntry { ts: number; origin: string; symbol: string; venue: string; side: string; amount: number; allowed: boolean; code: string; reasons: string[]; paper: boolean }

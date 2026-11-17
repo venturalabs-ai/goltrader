@@ -43,6 +43,7 @@ class Engine:
             asyncio.create_task(self._loop()),
             asyncio.create_task(self.scanner.run(120.0)),
             asyncio.create_task(self._options_loop()),
+            asyncio.create_task(self._equity_loop()),
         ]
 
     async def stop(self):
@@ -64,6 +65,12 @@ class Engine:
             await self.refresh_options()
             await asyncio.sleep(env_float("GOLTRADER_OPTIONS_REFRESH_S", 30))
 
+    async def _equity_loop(self):
+        """Saldo real da Bybit (testnet por padrão) a cada 60 s quando há chaves; senão fica o paper equity."""
+        while True:
+            await state.risk.refresh_equity()
+            await asyncio.sleep(60)
+
     async def refresh_options(self):
         try:
             chain, spot, source = await asyncio.wait_for(self.feed.option_chain(), timeout=20)
@@ -81,6 +88,15 @@ class Engine:
 
         candles = snap["candles"]
         price = snap["price"]
+
+        # preços para o portão de confiança e gerenciador de risco (breakeven/trailing/breaker a cada tick)
+        prices = {snap["symbol"]: price} if price else {}
+        for row in snap["derivatives"]:
+            if row.get("last_price"):
+                prices[row["symbol"]] = row["last_price"]
+        for sym, px in prices.items():
+            state.prices[sym] = px
+            await state.risk.on_price_tick(sym, px)
         obs = detect_order_blocks(snap["symbol"], candles) if candles else []
         z = vwap_zscore(candles)
         wall = snap["book_wall"]
@@ -134,6 +150,8 @@ class Engine:
             "z_score": None if z is None else round(z, 2),
             "news_sentiment_btc": news_score,
             "active_positions": state.active_positions[:8],
+            "risk_telemetry": state.risk.telemetry(),
+            "trust_ledger": state.gate.recent(20),
             "options_analytics": options,
             "market_news": self.scanner.snapshot(),
             "economic_calendar": get_economic_calendar(),
@@ -148,9 +166,14 @@ class Engine:
         if time.time() - self.last_funnel_ts < cooldown:
             return
         self.last_funnel_ts = time.time()
-        qty = env_float("GOLTRADER_FUNNEL_QTY", 0.001)
-        legs = [SmartOrderRequest(symbol=signal["symbol"], venue="BYBIT_PERP", side=signal["direction"], amount=qty,
-                                  leverage=min(5, int(env_float("GOLTRADER_MAX_LEVERAGE", 10))))]
-        if env_bool("GOLTRADER_FUNNEL_IQ", False):
-            legs.append(SmartOrderRequest(symbol=signal["symbol"], venue="IQ_BINARY", side=signal["direction"], amount=1.0))
+        # sinal -> Kelly fracionado -> portão de confiança (dentro de execute_single_order) -> registro da posição
+        side = signal["direction"]
+        plan = state.risk.size_signal(signal["symbol"], side, signal["price"], leverage=5)
+        if not plan["ok"]:
+            state.risk._log("SIZING_REJECT", f"{signal['symbol']} {side}: {plan['reason']}")
+            return
+        legs = [SmartOrderRequest(symbol=signal["symbol"], venue="BYBIT_PERP", side=side, amount=plan["qty"],
+                                  leverage=plan["leverage"], stop_loss=plan["stop_loss"])]
+        if env_bool("GOLTRADER_FUNNEL_IQ", False):  # ainda exige GOLTRADER_ENABLE_IQ no portão
+            legs.append(SmartOrderRequest(symbol=signal["symbol"], venue="IQ_BINARY", side=side, amount=1.0))
         await asyncio.gather(*(execute_single_order(o, origin="FUNIL") for o in legs))
