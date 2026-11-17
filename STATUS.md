@@ -32,6 +32,13 @@ conta real só com "CONFIRMAR"; kill switch mantido. **Sem GitHub Actions.**
 | Pepperstone | STUB (desligado) | cTrader Open API ou MT5 | MT5 só Windows |
 | IQ Option | STUB (desligado) — **risco ToS/bloqueio** | sem API oficial (libs não oficiais) | manter desligado |
 
+## Pendente
+- Backend autenticado (hoje `api/server.py` tem CORS `*` e sem auth — **não expor na VPS assim**).
+- Bybit READY (E2E Testnet), adapters ccxt, IBKR, cTrader.
+- Pulse: Sankey/breadth/humor; OB multi-timeframe (5m/1m); PnL realizado real ligado ao limite de perda diária; fechar posições no kill switch; IQ_DIGITAL; provedor real de calendário econômico; teste E2E na Testnet Bybit (ordens) — **ainda não executado**.
+- Docker + deploy na VPS atrás do Traefik (build na VPS, deploy key somente-leitura).
+- Paridade do notebook (mesmo código).
+
 ## Deploy VPS 24/7 (PR `feat/deploy-vps-24x7`) — 17/11/2026 08:32 BRT
 - [x] Dockerfiles multi-stage (`deploy/docker/`): `api` (python slim, sem root, mesma imagem para API e worker) e `web` (build do Vite + nginx sem root, proxy `/api` e `/ws`).
 - [x] `deploy/hostinger-vps/docker-compose.yml` (api/worker/web, Traefik via `GOLTRADER_DOMAIN`, rede `goltrader_default`, `restart: unless-stopped`, healthchecks, volume nomeado, log 10 MB × 5, read-only/cap_drop) + `.env.example` (Testnet, `ANALYZER_MODE=true`, `GOLTRADER_ALLOW_LIVE=false`, `GOLTRADER_API_TOKEN`).
@@ -39,13 +46,6 @@ conta real só com "CONFIRMAR"; kill switch mantido. **Sem GitHub Actions.**
 - [x] Scripts PowerShell do notebook (`scripts/windows/`): backup verificado, instalar/atualizar, rodar Testnet (travas forçadas).
 - [x] Runbook em português: `docs/DEPLOY-VPS.md`. Testes dos scripts com docker falso: `scripts/tests/test-deploy-scripts.sh` (23 verificações).
 - [ ] **Nada implantado** (a pedido). Descoberta da VPS (Traefik host-mode, resolvedor `letsencrypt`, redes `<projeto>_default`) documentada. Faltam: PR de execução na `main`, chaves da Testnet, DNS/host do painel.
-
-## Pendente
-- Backend autenticado (hoje `api/server.py` tem CORS `*` e sem auth — **não expor na VPS assim**).
-- Bybit READY (E2E Testnet), adapters ccxt, IBKR, cTrader.
-- Pulse: Sankey/breadth/humor; OB multi-timeframe (5m/1m); PnL realizado real ligado ao limite de perda diária; fechar posições no kill switch; IQ_DIGITAL; provedor real de calendário econômico; teste E2E na Testnet Bybit (ordens) — **ainda não executado**.
-- Docker + deploy na VPS atrás do Traefik (build na VPS, deploy key somente-leitura).
-- Paridade do notebook (mesmo código).
 
 ## Próximos passos
 1. Fase 0 do plano (Docker, pre-commit/gitleaks, isolar código Windows).
